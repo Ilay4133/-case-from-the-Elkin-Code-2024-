@@ -1,0 +1,640 @@
+import flet as ft
+import sqlite3
+
+def main(page: ft.Page):
+
+    db = sqlite3.connect('Dogs.data')
+    cur = db.cursor()
+    cur.execute("""CREATE TABLE IF NOT EXISTS doges ( 
+        name TEXT PRIMARY KEY, 
+        age INTEGER, paroda TEXT, 
+        pol TEXT, pis TEXT, 
+        foto TEXT)""")
+    db.close()
+
+    db = sqlite3.connect('Walk_Dogs.data')
+    cur = db.cursor()
+    cur.execute("""CREATE TABLE IF NOT EXISTS w_doges (name TEXT PRIMARY KEY)""")
+    db.close()
+
+    db = sqlite3.connect('Adopt_Dogs.data')
+    cur = db.cursor()
+    cur.execute("""CREATE TABLE IF NOT EXISTS a_doges (name TEXT PRIMARY KEY)""")
+    db.close()
+
+    db = sqlite3.connect('Guardianship_Dogs.data')
+    cur = db.cursor()
+    cur.execute("""CREATE TABLE IF NOT EXISTS g_doges (name TEXT PRIMARY KEY)""")
+    db.close()
+
+    page.scroll = "always"
+    page.title="SERVICE FOR HELP FOR DOGS FROM SHELTERS"
+    page.window_width=520
+    page.window_height = 1000
+    page.window_resizable=False
+    page.update()
+    global money1
+    global money2
+    money1=0
+    money2=0
+
+
+    page.vertical_alignment = ft.MainAxisAlignment.CENTER
+    page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
+    page.theme_mode="dark"
+    e=1
+    class User:
+        def enter_user(self):
+            admin.visible=False
+            user.visible = False
+            Glav_page.glav_page_us(e)
+            page.update()
+    class Admin:
+        def enter_admin(self):
+            user.visible = False
+            admin.visible = False
+            Glav_page.glav_page_adm(e)
+            page.update()
+
+    class Glav_page:
+        global money1
+        global money2
+
+        def glav_page_ok_back(self):
+            Glav_page.del1(1)
+            admin.visible = False
+            user.visible = False
+            ok_button.visible = False
+            Glav_page.glav_page_us(1)
+            page.update()
+
+        def ok(self):
+            Glav_page.del1(1)
+            admin.visible = False
+            user.visible = False
+            back.visible = False
+            ok_button.visible = True
+            page.update()
+
+        def walk_ok(self):
+            db = sqlite3.connect('Walk_Dogs.data')
+            cur = db.cursor()
+            sql_del = "DELETE FROM w_doges WHERE name = ?"
+            cur.execute(sql_del, (walk_donation.value,))
+            db.commit()
+            db.close()
+
+            Glav_page.ok(1)
+            walk_ok_text.visible = True
+            page.update()
+            walk_donation.value=""
+            page.update()
+
+        def guardianship_ok(self):
+            db = sqlite3.connect('Walk_Dogs.data')
+            cur = db.cursor()
+            db1 = sqlite3.connect('Guardianship_Dogs.data')
+            cur1 = db1.cursor()
+            sql_del = "DELETE FROM w_doges WHERE name = ?"
+            cur.execute(sql_del, (guardianship_donation.value,))
+            sql_del1 = "DELETE FROM g_doges WHERE name = ?"
+            cur1.execute(sql_del1, (guardianship_donation.value,))
+            db.commit()
+            db.close()
+            db1.commit()
+            db1.close()
+            Glav_page.ok(1)
+            page.update()
+            guardianship_ok_text.visible = True
+            page.update()
+
+            guardianship_donation.value=""
+            page.update()
+
+        def adopt_ok(self):
+            db = sqlite3.connect('Dogs.data')
+            cur = db.cursor()
+            db1 = sqlite3.connect('Walk_Dogs.data')
+            cur1 = db1.cursor()
+            db2 = sqlite3.connect('Guardianship_Dogs.data')
+            cur2 = db2.cursor()
+            db3 = sqlite3.connect('Adopt_Dogs.data')
+            cur3 = db3.cursor()
+            sql_del = "DELETE FROM doges WHERE name = ?"
+            cur.execute(sql_del, (adopt_donation.value,))
+            sql_del1 = "DELETE FROM W_doges WHERE name = ?"
+            cur1.execute(sql_del1, (adopt_donation.value,))
+            sql_del2 = "DELETE FROM g_doges WHERE name = ?"
+            cur2.execute(sql_del2, (adopt_donation.value,))
+            sql_del3 = "DELETE FROM a_doges WHERE name = ?"
+            cur3.execute(sql_del3, (adopt_donation.value,))
+            db.commit()
+            db.close()
+            db1.commit()
+            db1.close()
+            db2.commit()
+            db2.close()
+            db3.commit()
+            db3.close()
+            Glav_page.ok(1)
+            adopt_ok_text.visible = True
+            adopt_donation.value=""
+            page.update()
+
+        def vozvrat_walk_ok(self):
+            db = sqlite3.connect('Walk_Dogs.data')
+            cur = db.cursor()
+            cur.execute(f"INSERT INTO w_doges VALUES('{str(vozvrat_walk_name.value)}')")
+            db.commit()
+            Glav_page.ok(1)
+            vozvrat_walk_ok_text.visible = True
+            db.close()
+            vozvrat_walk_name.value=""
+            page.update()
+
+        def vozvrat_guardianship_ok(self):
+            db = sqlite3.connect('Walk_Dogs.data')
+            cur = db.cursor()
+            db1 = sqlite3.connect('Guardianship_Dogs.data')
+            cur1 = db1.cursor()
+            db2 = sqlite3.connect('Adopt_Dogs.data')
+            cur2 = db2.cursor()
+            cur.execute(f"INSERT OR IGNORE INTO w_doges VALUES('{str(vozvrat_guardianship_name.value)}')")
+            db.commit()
+            cur1.execute(f"INSERT OR IGNORE INTO g_doges VALUES('{str(vozvrat_guardianship_name.value)}')")
+            db1.commit()
+            cur2.execute(f"INSERT OR IGNORE INTO a_doges VALUES('{str(vozvrat_guardianship_name.value)}')")
+            db2.commit()
+            Glav_page.ok(1)
+            vozvrat_guardianship_ok_text.visible = True
+            db.close()
+            db1.close()
+            db2.close()
+            vozvrat_guardianship_name.value = ""
+            page.update()
+
+        def add_vozvrat_name1(self):
+            walk_vozvrat_button.visible = True
+            vozvrat_walk_name.visible = True
+            page.update()
+        def del_vozvrat_name1(self):
+            walk_vozvrat_button.visible = False
+            vozvrat_walk_name.visible = False
+            page.update()
+        def add_vozvrat_name2(self):
+            guardianship_vozvrat_button.visible = True
+            vozvrat_guardianship_name.visible = True
+            page.update()
+        def del_vozvrat_name2(self):
+            guardianship_vozvrat_button.visible = False
+            vozvrat_guardianship_name.visible = False
+            page.update()
+
+        def add_dogs_vozvrat(self):
+            vozvrat_walk.visible = True
+            vozvrat_guardianship.visible = True
+            page.update()
+        def del_dogs_vozvrat(self):
+            vozvrat_walk.visible = False
+            vozvrat_guardianship.visible = False
+            page.update()
+
+        def add_dogs_list(self):
+            list_dogs.visible = True
+            spisok_sobak.visible = True
+            page.update()
+        def del_dog_list(self):
+            list_dogs.visible = False
+            spisok_sobak.visible = False
+            page.update()
+
+        def add_feed(self):
+            feed_money.visible = True
+            get_feed_gramm.visible = True
+            feed_donation.visible = True
+            feed_donation_button.visible = True
+            page.update()
+        def del_feed(self):
+            feed_money.visible = False
+            get_feed_gramm.visible = False
+            feed_donation.visible=False
+            feed_donation_button.visible = False
+            feed_donation.value = ""
+            page.update()
+
+        def add_med(self):
+            med_money.visible = True
+            get_med_money.visible = True
+            med_donation.visible = True
+            med_donation_button.visible = True
+            page.update()
+        def del_med(self):
+            med_money.visible = False
+            get_med_money.visible = False
+            med_donation.visible=False
+            med_donation_button.visible = False
+            med_donation.value=""
+            page.update()
+
+        def add_walk(self):
+            w_spisok_sobak.visible = True
+            walk_donation.visible = True
+            walk_donation_button.visible = True
+            page.update()
+        def del_walk(self):
+            w_spisok_sobak.visible = False
+            walk_donation.visible=False
+            walk_donation_button.visible = False
+            walk_donation.value=""
+            page.update()
+
+        def add_guardianship(self):
+            g_spisok_sobak.visible = True
+            guardianship_donation.visible = True
+            guardianship_donation_button.visible = True
+            page.update()
+        def del_guardianship(self):
+            g_spisok_sobak.visible = False
+            guardianship_donation.visible=False
+            guardianship_donation_button.visible = False
+            guardianship_donation.value = ""
+            page.update()
+
+        def add_adopt(self):
+            a_spisok_sobak.visible = True
+            adopt_donation.visible = True
+            adopt_donation_button.visible = True
+            page.update()
+        def del_adopt(self):
+            a_spisok_sobak.visible = False
+            adopt_donation.visible=False
+            adopt_donation_button.visible = False
+            adopt_donation.value=""
+            page.update()
+
+        def glav_page_us(self):
+            vozvrat.visible = True
+            dogs_list.visible = True
+            back.visible = True
+            walk.visible = True
+            feed.visible = True
+            medicines.visible = True
+            guardianship.visible = True
+            adopt.visible = True
+
+        def glav_page_adm(self):
+            new_dog_foto.visible = True
+            med_money.visible = True
+            get_med_money.visible = True
+            feed_money.visible = True
+            get_feed_gramm.visible = True
+            dog_del.visible = True
+            dog_new.visible = True
+            new_dog_name.visible = True
+            add_new_dog.visible = True
+            new_dog_age.visible = True
+            new_dog_paroda.visible = True
+            new_dog_pol.visible = True
+            new_dog_opis.visible = True
+            del_dog.visible = True
+            add_del_dog.visible = True
+            back.visible = True
+            page.update()
+
+
+        def del1(self):
+            walk_ok_text.visible = False
+            guardianship_ok_text.visible = False
+            adopt_ok_text.visible = False
+            vozvrat_walk_ok_text.visible = False
+            vozvrat_guardianship_ok_text.visible = False
+            ok_button.visible = False
+            walk_vozvrat_button.visible = False
+            guardianship_vozvrat_button.visible = False
+            vozvrat_guardianship_name.visible = False
+            vozvrat_walk_name.visible = False
+            vozvrat.visible = False
+            vozvrat_walk.visible = False
+            vozvrat_guardianship.visible = False
+            w_spisok_sobak.visible = False
+            a_spisok_sobak.visible = False
+            g_spisok_sobak.visible = False
+            spisok_sobak.visible = False
+            new_dog_foto.visible = False
+            med_money.visible=False
+            feed_money.visible=False
+            get_feed_gramm.visible=False
+            get_med_money.visible=False
+            list_dogs.visible=False
+            dogs_list.visible=False
+            walk_donation_button.visible=False
+            adopt_donation_button.visible=False
+            guardianship_donation_button.visible=False
+            walk_donation.visible=False
+            guardianship_donation.visible=False
+            adopt_donation.visible=False
+            feed_donation_button.visible=False
+            med_donation_button.visible=False
+            dog_del.visible=False
+            dog_new.visible=False
+            feed_donation.visible=False
+            med_donation.visible=False
+            new_dog_age.visible=False
+            new_dog_paroda.visible=False
+            new_dog_pol.visible=False
+            new_dog_opis.visible=False
+            new_dog_name.visible=False
+            add_new_dog.visible=False
+            del_dog.visible=False
+            add_del_dog.visible=False
+            back.visible = False
+            walk.visible=False
+            feed.visible=False
+            medicines.visible=False
+            guardianship.visible=False
+            adopt.visible=False
+            page.update()
+
+        def back(self):
+            new_dog_name.value=""
+            del_dog.value = ""
+            new_dog_age.value = ""
+            new_dog_paroda.value = ""
+            new_dog_pol.value = ""
+            new_dog_opis.value = ""
+            Glav_page.del1(e)
+            admin.visible = True
+            user.visible = True
+            back.visible=False
+            page.update()
+
+        def donation_feed(self):
+            global money1
+            if float(feed_donation.value)>=0:
+                money1=money1+float(feed_donation.value)
+                feed_donation.value=""
+                get_feed_gramm.value=f"{money1} руб."
+                page.update()
+            else:
+                feed_donation.value = ""
+                page.update()
+        def donation_med(self):
+            global money2
+            if float(med_donation.value) >= 0:
+                money2 = money2 + float(med_donation.value)
+                med_donation.value = ""
+                get_med_money.value = f"{money2} руб."
+                page.update()
+            else:
+                med_donation.value = ""
+                page.update()
+        def donation_walk(self):
+            walk_donation.value=""
+            page.update()
+        def donation_guardianship(self):
+            guardianship_donation.value=""
+            page.update()
+        def donation_adopt(self):
+            adopt_donation.value=""
+            page.update()
+    class Dog:
+        def vozvrat_dog_walk(self):
+            Glav_page.vozvrat_walk_ok(1)
+            vozvrat_walk_name.value=""
+            page.update()
+
+        def vozvrat_dog_guardianship(self):
+            Glav_page.vozvrat_guardianship_ok(1)
+            vozvrat_guardianship_name.value = ""
+            page.update()
+
+        def dog_lists_obnov(self):
+            db = sqlite3.connect('Dogs.data')
+            cur = db.cursor()
+            cur.execute(f"SELECT name FROM doges")
+            db1 = sqlite3.connect('Walk_Dogs.data')
+            cur1 = db1.cursor()
+            db2 = sqlite3.connect('Adopt_Dogs.data')
+            cur2 = db2.cursor()
+            db3 = sqlite3.connect('Guardianship_Dogs.data')
+            cur3 = db3.cursor()
+            for row in cur.fetchall():
+                print(row)
+                cur1.execute(f"INSERT OR IGNORE INTO w_doges VALUES('{str(row[0])}')")
+                cur2.execute(f"INSERT OR IGNORE INTO a_doges VALUES('{str(row[0])}')")
+                cur3.execute(f"INSERT OR IGNORE INTO g_doges VALUES('{str(row[0])}')")
+                db1.commit()
+                db2.commit()
+                db3.commit()
+
+            db.close()
+            db1.close()
+            db2.close()
+            db3.close()
+
+        def add_dog_to_table(self):
+            db = sqlite3.connect('Dogs.data')
+            cur = db.cursor()
+            cur.execute("""CREATE TABLE IF NOT EXISTS doges (
+                name TEXT PRIMARY KEY,
+                age INTEGER,
+                paroda TEXT,
+                pol TEXT,
+                pis TEXT,
+                foto TEXT
+            )""")
+            db = sqlite3.connect('Dogs.data')
+            cur = db.cursor()
+            cur.execute(f"INSERT INTO doges VALUES('{new_dog_name.value}', '{int(new_dog_age.value)}', '{new_dog_paroda.value}',"
+                        f" '{new_dog_pol.value}', '{new_dog_opis.value}', '{new_dog_foto.value}')")
+            db.commit()
+            db = sqlite3.connect('Dogs.Data')
+            cur = db.cursor()
+            cur.execute(f"SELECT * FROM doges WHERE name ='{new_dog_name.value}' AND age = '{int(new_dog_age.value)}' "
+                        f"AND paroda = '{new_dog_paroda.value}' AND pol = '{new_dog_pol.value}' "
+                        f"AND pis = '{new_dog_opis.value}' AND foto = '{new_dog_foto.value}'")
+            print(cur.fetchone())
+
+            db.close()
+            new_dog_name.value = ""
+            del_dog.value = ""
+            new_dog_age.value = ""
+            new_dog_paroda.value = ""
+            new_dog_pol.value = ""
+            new_dog_opis.value = ""
+            new_dog_foto.value = ""
+        def add_dog(self):
+            Dog.add_dog_to_table(1)
+            page.update()
+
+        def del_dog_from_table(self):
+            db = sqlite3.connect('Dogs.data')
+            cur = db.cursor()
+            sql_del="DELETE FROM doges WHERE name = ?"
+            cur.execute(sql_del, (del_dog.value, ))
+            db.commit()
+            db.close()
+
+        def del_dog(self):
+            Dog.del_dog_from_table(1)
+            new_dog_name.value = ""
+            del_dog.value = ""
+            new_dog_age.value = ""
+            new_dog_paroda.value = ""
+            new_dog_pol.value = ""
+            new_dog_opis.value = ""
+            page.update()
+            pass
+        def creat_dogs_list(self):
+            raw=""
+            rew=""
+            db = sqlite3.connect('Dogs.data')
+            cur = db.cursor()
+            cur.execute("SELECT name,age, paroda, pol, pis ,foto FROM doges")
+
+            names = "Имя: "
+            parodes = "Порода: "
+            ages=", Возраст: "
+            poles="Пол: "
+            opis="Описание: "
+
+            for row in cur.fetchall():
+                raw = f"{raw+names+str(row[0])+ages+str(row[1])}\n"+f"{parodes+str(row[2])}\n"+f"{poles+str(row[3])}\n"+f"{opis+str(row[4])}\n"+"\n"
+                rew = f"{rew+str(row[5])}\n"
+                print(row[0], row[1])
+            print(raw)
+            print(rew)
+            global spisok_sobak
+            global foto_sobak
+            spisok_sobak=ft.Text(value=f"{raw}", size=20, color="blue600")
+            page.add(ft.Row([spisok_sobak]))
+            db.close()
+
+        def creat_w_dogs_list(self):
+            raw=""
+            db = sqlite3.connect('Walk_Dogs.data')
+            cur = db.cursor()
+            cur.execute("SELECT name FROM w_doges")
+            names = "Имя: "
+
+            for row in cur.fetchall():
+                raw = f"{raw+names+str(row[0])}\n"
+                print(row[0])
+            print(raw)
+            global w_spisok_sobak
+            w_spisok_sobak=ft.Text(value=f"{raw}", size=20, color="blue600")
+            page.add(w_spisok_sobak)
+            db.close()
+
+        def creat_a_dogs_list(self):
+            raw=""
+            db = sqlite3.connect('Adopt_Dogs.data')
+            cur = db.cursor()
+            cur.execute("SELECT name FROM a_doges")
+            names = "Имя: "
+            for row in cur.fetchall():
+                raw = f"{raw+names+str(row[0])}\n"
+                print(row[0])
+            print(raw)
+            global a_spisok_sobak
+            a_spisok_sobak=ft.Text(value=f"{raw}", size=20, color="blue600")
+            page.add(a_spisok_sobak)
+            db.close()
+
+        def creat_g_dogs_list(self):
+            raw=""
+            db = sqlite3.connect('Guardianship_Dogs.data')
+            cur = db.cursor()
+            cur.execute("SELECT name FROM g_doges")
+            names = "Имя: "
+
+            for row in cur.fetchall():
+                raw = f"{raw+names+str(row[0])}\n"
+                print(row[0])
+            print(raw)
+            global g_spisok_sobak
+            g_spisok_sobak=ft.Text(value=f"{raw}", size=20, color="blue600")
+            page.add(g_spisok_sobak)
+            db.close()
+
+    #icon_account = ft.IconButton(ft.icons.ACCOUNT_CIRCLE_OUTLINED, icon_size=60, icon_color="white500")
+    feed_donation = ft.TextField(value="", hint_text="Сколько вы хотите пожертвовать?", width=300)
+    med_donation = ft.TextField(value="", hint_text="Сколько вы хотите пожертвовать?", width=300)
+    walk_donation = ft.TextField(value="", hint_text="Кого вы хотите выгулить?", width=300)
+    guardianship_donation = ft.TextField(value="", hint_text="Кого вы хотите опекать?", width=300)
+    adopt_donation = ft.TextField(value="", hint_text="Кого вы хотите усыновить?", width=300)
+    vozvrat_walk_name=ft.TextField(value="", hint_text="Кого вы возвращаете (Имя)?", width=300)
+    vozvrat_guardianship_name = ft.TextField(value="", hint_text="Кого вы возвращаете (Имя)?", width=300)
+
+    ok_button = ft.ElevatedButton(text="Окей", width=300, height=50,bgcolor="green450",color="black", on_click=Glav_page.glav_page_ok_back)
+
+    feed_donation_button = ft.ElevatedButton(text="Пожертвовать", width=300, height=50,bgcolor="green450",color="black", on_click=Glav_page.donation_feed)
+    med_donation_button = ft.ElevatedButton(text="Пожертвовать", width=300, height=50,bgcolor="green450",color="black", on_click=Glav_page.donation_med)
+    walk_donation_button = ft.ElevatedButton(text="Подать заявку на прогулку", width=300, height=50, bgcolor="green450",color="black", on_click=Glav_page.walk_ok)
+    adopt_donation_button = ft.ElevatedButton(text="Подать заявку на усыновление", width=300, height=50, bgcolor="green450",color="black", on_click=Glav_page.adopt_ok)
+    guardianship_donation_button = ft.ElevatedButton(text="Подать заявку на опекунство", width=300, height=50, bgcolor="green450",color="black", on_click=Glav_page.guardianship_ok)
+    walk_vozvrat_button = ft.ElevatedButton(text="Подать заявку на возврат собаки", width=300, height=50, bgcolor="green450", color="black", on_click=Dog.vozvrat_dog_walk)
+    guardianship_vozvrat_button = ft.ElevatedButton(text="Подать заявку на возврат собаки", width=300, height=50,bgcolor="green450", color="black", on_click=Dog.vozvrat_dog_guardianship)
+
+    new_dog_name = ft.TextField(value="", hint_text="Имя собаки", width=300)
+    new_dog_age = ft.TextField(value="", hint_text="Возраст собаки", width=300)
+    new_dog_paroda = ft.TextField(value="", hint_text="Порода собаки", width=300)
+    new_dog_pol = ft.TextField(value="", hint_text="Пол собаки", width=300)
+    new_dog_opis = ft.TextField(value="", hint_text="Краткое описание", width=300)
+    new_dog_foto = ft.TextField(value="", hint_text="Фотография (URL ссылка)", width=300)
+    add_new_dog = ft.ElevatedButton(text="Добавить новую собаку в список", width=300, height=50, on_click=Dog.add_dog)
+    del_dog = ft.TextField(value="", hint_text="Имя собаки", width=300)
+    add_del_dog = ft.ElevatedButton(text="Удалить собаку из списка", width=300, height=50, on_click=Dog.del_dog)
+
+    walk_ok_text = ft.Text(value=f'Вы подали заявку на прогулку  {walk_donation.value}', size=25, color="blue600")
+    guardianship_ok_text = ft.Text(value=f'Вы подали заявку на опекунство {guardianship_donation.value}', size=25, color="blue600")
+    adopt_ok_text = ft.Text(value=f'Вы подали заявку на усыновление {adopt_donation.value}', size=25, color="blue600")
+    vozvrat_walk_ok_text = ft.Text(value=f'Вы подали заявку на возврат {vozvrat_walk_name.value} после прогулки', size=25, color="blue600")
+    vozvrat_guardianship_ok_text = ft.Text(value=f'Вы подали заявку на возврат {vozvrat_guardianship_name.value} после опекунства', size=25, color="blue600")
+
+    name_of_the_shelter = ft.Text(value='Приют "Добрые руки" ', size=30, color="blue600", weight=ft.FontWeight.W_500)
+    dog_new = ft.Text(value='Добавление собаки в список', size=25, color="blue600")
+    dog_del = ft.Text(value='Удаление собаки из списка', size=25, color="blue600")
+    list_dogs = ft.Text(value='Собаки:', size=25, color="blue600")
+    med_money = ft.Text(value='Пожертвовано на медицину:', size=25, color="blue600")
+    feed_money = ft.Text(value='Пожертвовано на корм:', size=25, color="blue600")
+
+    get_med_money = ft.Text(value=f"{money2} руб.", size=25, color="blue600")
+    get_feed_gramm = ft.Text(value=f"{money1} руб.", size=25, color="blue600")
+
+    admin = ft.ElevatedButton(text="Вход с правами админа", width=300, height=50, on_click=Admin.enter_admin)
+    user = ft.ElevatedButton(text="Вход с правами пользователя", width=300, height=50, on_click=User.enter_user)
+
+    vozvrat = ft.ElevatedButton(text="Возврат собаки", width=300, height=50, on_click=Glav_page.add_dogs_vozvrat,on_long_press=Glav_page.del_dogs_vozvrat)
+    vozvrat_walk = ft.ElevatedButton(text="Возврат собаки с прогулки", width=300, height=50, on_click=Glav_page.add_vozvrat_name1, on_long_press=Glav_page.del_vozvrat_name1)
+    vozvrat_guardianship = ft.ElevatedButton(text="Возврат собаки с опекунства", width=300, height=50, on_click=Glav_page.add_vozvrat_name2,on_long_press=Glav_page.del_vozvrat_name2)
+    back = ft.ElevatedButton(text="Обратно", width=300, height=50, on_click=Glav_page.back)
+    dogs_list = ft.ElevatedButton(text="Список всех собак", width=300, height=50, on_click=Glav_page.add_dogs_list, on_long_press=Glav_page.del_dog_list)
+    walk = ft.ElevatedButton(text="Погулять с собакой", width=300, height=50,on_click=Glav_page.add_walk, on_long_press=Glav_page.del_walk)
+    feed = ft.ElevatedButton(text="Пожертвовать корм", width=300, height=50, on_click=Glav_page.add_feed, on_long_press=Glav_page.del_feed)
+    medicines = ft.ElevatedButton(text="Пожертвовать лекарства", width=300, height=50, on_click=Glav_page.add_med, on_long_press=Glav_page.del_med)
+    guardianship = ft.ElevatedButton(text="Стать опекуном подопечного", width=300, height=50, on_click=Glav_page.add_guardianship, on_long_press=Glav_page.del_guardianship)
+    adopt = ft.ElevatedButton(text="Усыновить подопечного", width=300, height=50, on_click=Glav_page.add_adopt, on_long_press=Glav_page.del_adopt)
+
+    #Dog.dog_lists_obnov(1)
+
+    page.add(ft.Column([name_of_the_shelter, user, admin, dogs_list, list_dogs]))
+    Dog.creat_dogs_list(1)
+    page.add(ft.Column([walk, walk_donation]))
+    Dog.creat_w_dogs_list(1)
+    page.add(ft.Column([walk_donation_button,
+                        feed, feed_money, get_feed_gramm, feed_donation, feed_donation_button,
+                        medicines, med_money, get_med_money, med_donation, med_donation_button,
+                        guardianship,guardianship_donation]))
+    Dog.creat_g_dogs_list(1)
+    page.add(ft.Column([guardianship_donation_button,
+                        adopt, adopt_donation]))
+    Dog.creat_a_dogs_list(1)
+    page.add(ft.Column([adopt_donation_button,
+                        dog_new, new_dog_name,new_dog_age,new_dog_paroda,new_dog_pol, new_dog_opis,new_dog_foto,
+                        add_new_dog, dog_del, del_dog, add_del_dog,vozvrat, vozvrat_walk,vozvrat_walk_name, walk_vozvrat_button,
+                        vozvrat_guardianship,vozvrat_guardianship_name,guardianship_vozvrat_button,
+                        back, walk_ok_text, guardianship_ok_text, adopt_ok_text,vozvrat_walk_ok_text,vozvrat_guardianship_ok_text,ok_button]))
+    Glav_page.del1(e)
+
+ft.app(target=main)

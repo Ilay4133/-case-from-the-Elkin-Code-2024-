@@ -38,7 +38,6 @@ def main(page: ft.Page):
     money1=0
     money2=0
 
-
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
     page.theme_mode="dark"
@@ -408,31 +407,13 @@ def main(page: ft.Page):
             vozvrat_guardianship_name.value = ""
             page.update()
 
-        def dog_lists_obnov(self):
-            db = sqlite3.connect('Dogs.data')
-            cur = db.cursor()
-            cur.execute(f"SELECT name FROM doges")
+        def add_dog_to_table(self):
             db1 = sqlite3.connect('Walk_Dogs.data')
             cur1 = db1.cursor()
             db2 = sqlite3.connect('Adopt_Dogs.data')
             cur2 = db2.cursor()
             db3 = sqlite3.connect('Guardianship_Dogs.data')
             cur3 = db3.cursor()
-            for row in cur.fetchall():
-                print(row)
-                cur1.execute(f"INSERT OR IGNORE INTO w_doges VALUES('{str(row[0])}')")
-                cur2.execute(f"INSERT OR IGNORE INTO a_doges VALUES('{str(row[0])}')")
-                cur3.execute(f"INSERT OR IGNORE INTO g_doges VALUES('{str(row[0])}')")
-                db1.commit()
-                db2.commit()
-                db3.commit()
-
-            db.close()
-            db1.close()
-            db2.close()
-            db3.close()
-
-        def add_dog_to_table(self):
             db = sqlite3.connect('Dogs.data')
             cur = db.cursor()
             cur.execute("""CREATE TABLE IF NOT EXISTS doges (
@@ -447,6 +428,12 @@ def main(page: ft.Page):
             cur = db.cursor()
             cur.execute(f"INSERT INTO doges VALUES('{new_dog_name.value}', '{int(new_dog_age.value)}', '{new_dog_paroda.value}',"
                         f" '{new_dog_pol.value}', '{new_dog_opis.value}', '{new_dog_foto.value}')")
+            cur1.execute(f"INSERT OR IGNORE INTO w_doges VALUES('{new_dog_name.value}')")
+            cur2.execute(f"INSERT OR IGNORE INTO a_doges VALUES('{new_dog_name.value}')")
+            cur3.execute(f"INSERT OR IGNORE INTO g_doges VALUES('{new_dog_name.value}')")
+            db1.commit()
+            db2.commit()
+            db3.commit()
             db.commit()
             db = sqlite3.connect('Dogs.Data')
             cur = db.cursor()
@@ -454,8 +441,10 @@ def main(page: ft.Page):
                         f"AND paroda = '{new_dog_paroda.value}' AND pol = '{new_dog_pol.value}' "
                         f"AND pis = '{new_dog_opis.value}' AND foto = '{new_dog_foto.value}'")
             print(cur.fetchone())
-
             db.close()
+            db1.close()
+            db2.close()
+            db3.close()
             new_dog_name.value = ""
             del_dog.value = ""
             new_dog_age.value = ""
@@ -615,8 +604,6 @@ def main(page: ft.Page):
     medicines = ft.ElevatedButton(text="Пожертвовать лекарства", width=300, height=50, on_click=Glav_page.add_med, on_long_press=Glav_page.del_med)
     guardianship = ft.ElevatedButton(text="Стать опекуном подопечного", width=300, height=50, on_click=Glav_page.add_guardianship, on_long_press=Glav_page.del_guardianship)
     adopt = ft.ElevatedButton(text="Усыновить подопечного", width=300, height=50, on_click=Glav_page.add_adopt, on_long_press=Glav_page.del_adopt)
-
-    #Dog.dog_lists_obnov(1)
 
     page.add(ft.Column([name_of_the_shelter, user, admin, dogs_list, list_dogs]))
     Dog.creat_dogs_list(1)

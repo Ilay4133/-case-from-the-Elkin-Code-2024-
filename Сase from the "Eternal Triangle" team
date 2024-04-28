@@ -2,7 +2,6 @@ import flet as ft
 import sqlite3
 
 def main(page: ft.Page):
-
     db = sqlite3.connect('Dogs.data')
     cur = db.cursor()
     cur.execute("""CREATE TABLE IF NOT EXISTS doges ( 
@@ -29,6 +28,7 @@ def main(page: ft.Page):
 
     page.scroll = "always"
     page.title="SERVICE FOR HELP FOR DOGS FROM SHELTERS"
+    page.theme_mode = "dark"
     page.window_width=520
     page.window_height = 1000
     page.window_resizable=False
@@ -40,7 +40,6 @@ def main(page: ft.Page):
 
     page.vertical_alignment = ft.MainAxisAlignment.CENTER
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
-    page.theme_mode="dark"
     e=1
     class User:
         def enter_user(self):
@@ -546,7 +545,6 @@ def main(page: ft.Page):
             page.add(g_spisok_sobak)
             db.close()
 
-    #icon_account = ft.IconButton(ft.icons.ACCOUNT_CIRCLE_OUTLINED, icon_size=60, icon_color="white500")
     feed_donation = ft.TextField(value="", hint_text="Сколько вы хотите пожертвовать?", width=300)
     med_donation = ft.TextField(value="", hint_text="Сколько вы хотите пожертвовать?", width=300)
     walk_donation = ft.TextField(value="", hint_text="Кого вы хотите выгулить?", width=300)

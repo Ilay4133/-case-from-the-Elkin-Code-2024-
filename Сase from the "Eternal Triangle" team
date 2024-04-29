@@ -202,7 +202,7 @@ def main(page: ft.Page):
             page.update()
 
             raw = ""
-            db = sqlite3.connect('AdoptDogs.data')
+            db = sqlite3.connect('Adopt_Dogs.data')
             cur = db.cursor()
             cur.execute("SELECT name FROM a_doges")
             names = "Имя: "
@@ -232,16 +232,18 @@ def main(page: ft.Page):
             raw = ""
             db = sqlite3.connect('Dogs.data')
             cur = db.cursor()
-            cur.execute("SELECT name FROM doges")
+            cur.execute("SELECT name,age, paroda, pol, pis ,foto FROM doges")
             names = "Имя: "
+            parodes = "Порода: "
+            ages = ", Возраст: "
+            poles = "Пол: "
+            opis = "Описание: "
 
             for row in cur.fetchall():
-                raw = f"{raw + names + str(row[0])}\n"
-                print(row[0])
-            print(raw)
+                raw = f"{raw + names + str(row[0]) + ages + str(row[1])}\n" + f"{parodes + str(row[2])}\n" + f"{poles + str(row[3])}\n" + f"{opis + str(row[4])}\n" + "\n"
+                print(row[0], row[1])
             spisok_sobak.value = raw
             db.close()
-            page.update()
 
             Glav_page.ok(1)
             adopt_ok_text.visible = True
@@ -715,8 +717,6 @@ def main(page: ft.Page):
             db2.close()
             db3.commit()
             db3.close()
-
-
 
             raw = ""
             rew = ""

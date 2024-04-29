@@ -360,8 +360,12 @@ def main(page: ft.Page):
             vozvrat_guardianship.visible = True
             page.update()
         def del_dogs_vozvrat(self):
+            walk_vozvrat_button.visible = False
+            vozvrat_walk_name.visible = False
             vozvrat_walk.visible = False
             vozvrat_guardianship.visible = False
+            guardianship_vozvrat_button.visible = False
+            vozvrat_guardianship_name.visible = False
             page.update()
 
         def add_dogs_list(self):
@@ -922,7 +926,8 @@ def main(page: ft.Page):
     medicines = ft.ElevatedButton(text="Пожертвовать лекарства", width=300, height=50, on_click=Glav_page.add_med, on_long_press=Glav_page.del_med)
     guardianship = ft.ElevatedButton(text="Стать опекуном подопечного", width=300, height=50, on_click=Glav_page.add_guardianship, on_long_press=Glav_page.del_guardianship)
     adopt = ft.ElevatedButton(text="Усыновить подопечного", width=300, height=50, on_click=Glav_page.add_adopt, on_long_press=Glav_page.del_adopt)
-
+ 
+ 
     page.add(ft.Column([name_of_the_shelter, user, admin, dogs_list, list_dogs]))
     Dog.creat_dogs_list(1)
     page.add(ft.Column([walk, walk_donation]))
